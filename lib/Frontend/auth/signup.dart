@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 TextEditingController _mobileController = TextEditingController();
 
@@ -50,5 +51,12 @@ Future<void> registerUser() async {
   if (response.statusCode == 200) {
     final dynamic data = jsonDecode(response.body);
     print('Successfully registered $data');
+    Fluttertoast.showToast(
+      msg: "Successfully Registered✅",
+    );
+  } else {
+    Fluttertoast.showToast(
+      msg: "Y",
+    );
   }
 }
