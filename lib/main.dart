@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:foodapp/Frontend/auth/login.dart';
 import 'package:foodapp/Frontend/auth/signup.dart';
-import 'Frontend/home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.amberAccent),
         useMaterial3: true,
       ),
-      home: const Signup(),
+      home: const Login(),
     );
   }
 }
