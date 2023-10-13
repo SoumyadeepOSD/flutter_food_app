@@ -1,24 +1,25 @@
-import 'dart:convert';
-import 'package:foodapp/Frontend/auth/login.dart';
-import 'package:foodapp/Frontend/constant/color.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:foodapp/Frontend/home.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../constant/color.dart';
 import '../constant/images.dart';
+import 'signup.dart';
 
 final List<String> countryCodeList = ["+91", "+89", "+03", "+09"];
 String selectedCode = "+91";
 
 TextEditingController _mobileController = TextEditingController();
 
-class Signup extends StatefulWidget {
-  const Signup({super.key});
+class Login extends StatefulWidget {
+  const Login({super.key});
 
   @override
-  State<Signup> createState() => _SignupState();
+  State<Login> createState() => _LoginState();
 }
 
-class _SignupState extends State<Signup> {
+class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +35,7 @@ class _SignupState extends State<Signup> {
                   height: 50,
                 ),
                 const Text(
-                  "Sign-up",
+                  "Sign-In",
                   style: TextStyle(fontWeight: FontWeight.w900, fontSize: 50),
                 ),
                 const Image(
@@ -100,10 +101,10 @@ class _SignupState extends State<Signup> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: yellow),
                     onPressed: () {
-                      registerUser();
+                      loginUser(context: context);
                     },
                     child: Text(
-                      "Register",
+                      "Login",
                       style: TextStyle(
                           color: black,
                           fontSize: 18,
@@ -115,7 +116,7 @@ class _SignupState extends State<Signup> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Already have an account?",
+                      "Don't have an account?",
                       style: TextStyle(
                         fontWeight: FontWeight.normal,
                         color: darkGrey,
@@ -127,12 +128,12 @@ class _SignupState extends State<Signup> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const Login(),
+                            builder: (context) => const Signup(),
                           ),
                         );
                       },
                       child: Text(
-                        "Login",
+                        "Signup",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: blue,
@@ -151,9 +152,9 @@ class _SignupState extends State<Signup> {
   }
 }
 
-Future<void> registerUser() async {
+Future<void> loginUser({context}) async {
   final response = await http.post(
-    Uri.parse("http://192.168.0.102:8000/register"),
+    Uri.parse("http://192.168.0.102:8000/login"),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -165,11 +166,20 @@ Future<void> registerUser() async {
     final dynamic data = jsonDecode(response.body);
     print('Successfully registered $data');
     Fluttertoast.showToast(
-      msg: "Successfully Registered✅",
+      msg: "Successfully logged in✅",
     );
+    Future.delayed(const Duration(seconds: 1), () {
+      const CircularProgressIndicator();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const HomePage(),
+        ),
+      );
+    });
   } else {
     Fluttertoast.showToast(
-      msg: "User already exists",
+      msg: "Failed to login",
     );
   }
 }
