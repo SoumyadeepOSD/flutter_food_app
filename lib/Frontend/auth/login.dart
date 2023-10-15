@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:foodapp/Frontend/home.dart';
 import 'dart:convert';
@@ -9,7 +10,8 @@ import 'signup.dart';
 
 final List<String> countryCodeList = ["+91", "+89", "+03", "+09"];
 String selectedCode = "+91";
-
+final _storage = FlutterSecureStorage();
+String mobile = '';
 TextEditingController _mobileController = TextEditingController();
 
 class Login extends StatefulWidget {
@@ -153,21 +155,24 @@ class _LoginState extends State<Login> {
 }
 
 Future<void> loginUser({context}) async {
+  //*take it from textfield for logged in*
   final response = await http.post(
     Uri.parse("http://192.168.0.102:8000/login"),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
-    body: jsonEncode(<String, String>{
-      'mobile': _mobileController.text.toString(),
-    }),
+    body: jsonEncode(
+        <String, String>{'mobile': _mobileController.text.toString()}),
   );
+
   if (response.statusCode == 200) {
     final dynamic data = jsonDecode(response.body);
     print('Successfully registered $data');
     Fluttertoast.showToast(
       msg: "Successfully logged in✅",
     );
+    await _storage.write(
+        key: 'mobile', value: _mobileController.text.toString());
     Future.delayed(const Duration(seconds: 1), () {
       const CircularProgressIndicator();
       Navigator.pushReplacement(

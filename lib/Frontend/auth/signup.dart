@@ -1,14 +1,16 @@
 import 'dart:convert';
 import 'package:foodapp/Frontend/auth/login.dart';
 import 'package:foodapp/Frontend/constant/color.dart';
+import 'package:foodapp/Frontend/home.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../constant/images.dart';
 
 final List<String> countryCodeList = ["+91", "+89", "+03", "+09"];
 String selectedCode = "+91";
-
+final _storage = FlutterSecureStorage();
 TextEditingController _mobileController = TextEditingController();
 
 class Signup extends StatefulWidget {
@@ -100,7 +102,7 @@ class _SignupState extends State<Signup> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: yellow),
                     onPressed: () {
-                      registerUser();
+                      registerUser(context: context);
                     },
                     child: Text(
                       "Register",
@@ -151,7 +153,7 @@ class _SignupState extends State<Signup> {
   }
 }
 
-Future<void> registerUser() async {
+Future<void> registerUser({context}) async {
   final response = await http.post(
     Uri.parse("http://192.168.0.102:8000/register"),
     headers: <String, String>{
@@ -166,6 +168,15 @@ Future<void> registerUser() async {
     print('Successfully registered $data');
     Fluttertoast.showToast(
       msg: "Successfully Registered✅",
+    );
+    // Store the "mobile" value securely
+    await _storage.write(
+        key: 'mobile', value: _mobileController.text.toString());
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const HomePage(),
+      ),
     );
   } else {
     Fluttertoast.showToast(
