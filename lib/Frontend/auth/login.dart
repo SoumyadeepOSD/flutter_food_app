@@ -179,7 +179,6 @@ Future<void> loginUser({context, value}) async {
     await readSecureData().then((e) {
       value.setNumber(e.toString());
     });
-
     Future.delayed(const Duration(seconds: 1), () {
       const CircularProgressIndicator();
       Navigator.pushReplacement(

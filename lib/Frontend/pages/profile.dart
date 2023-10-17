@@ -13,29 +13,161 @@ class Profile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: white,
+        elevation: 0,
         title: const Text("Profile"),
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Consumer<generalStateProvider>(builder: (context, value, child) {
-          print(value.thisnumber.toString());
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20.0),
-            height: MediaQuery.of(context).size.height,
-            width: double.infinity,
-            color: lightGrey,
-            child: Column(
-              children: [
-                Text(
-                  value.thisnumber.toString(),
-                  style: TextStyle(fontSize: 56, color: Colors.red),
+      body: Consumer<generalStateProvider>(builder: (context, value, child) {
+        print(value.thisnumber.toString());
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20.0),
+          height: MediaQuery.of(context).size.height,
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "My Account",
+                style: TextStyle(
+                  color: black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
                 ),
-                Text("herlo"),
-              ],
-            ),
-          );
-        }),
-      ),
+              ),
+              const SizedBox(height: 20.0),
+              Text(
+                value.thisnumber.toString(),
+                style: TextStyle(fontSize: 18, color: black),
+              ),
+              const SizedBox(height: 20.0),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                decoration: BoxDecoration(
+                    color: lightBlue,
+                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                height: 100,
+                width: double.infinity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      children: [
+                        IconButton.outlined(
+                          onPressed: () {},
+                          icon: const Icon(Icons.account_balance_wallet),
+                        ),
+                        Text(
+                          "Wallet",
+                          style: TextStyle(fontSize: 14, color: black),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        IconButton.outlined(
+                          onPressed: () {},
+                          icon: const Icon(Icons.chat),
+                        ),
+                        Text(
+                          "Support",
+                          style: TextStyle(fontSize: 14, color: black),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        IconButton.outlined(
+                          onPressed: () {},
+                          icon: const Icon(Icons.payments_sharp),
+                        ),
+                        Text(
+                          "Payment",
+                          style: TextStyle(fontSize: 14, color: black),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20.0),
+              Text(
+                "YOUR INFORMATION",
+                style: TextStyle(fontSize: 16, color: darkGrey),
+              ),
+              ListTile(
+                leading: IconButton.outlined(
+                  color: verylightgrey,
+                  onPressed: () {},
+                  icon: Icon(Icons.trolley, color: darkGrey),
+                ),
+                title: Text(
+                  "Your orders",
+                  style: TextStyle(fontSize: 16, color: black),
+                ),
+                trailing: Icon(Icons.arrow_forward_ios_outlined,
+                    color: darkGrey, size: 18),
+              ),
+              ListTile(
+                leading: IconButton.outlined(
+                  color: verylightgrey,
+                  onPressed: () {},
+                  icon: Icon(Icons.location_on_sharp, color: darkGrey),
+                ),
+                title: Text(
+                  "Address",
+                  style: TextStyle(fontSize: 16, color: black),
+                ),
+                trailing: Icon(Icons.arrow_forward_ios_outlined,
+                    color: darkGrey, size: 18),
+              ),
+              const SizedBox(height: 20.0),
+              Text(
+                "OTHER INFORMATION",
+                style: TextStyle(fontSize: 16, color: darkGrey),
+              ),
+              ListTile(
+                leading: IconButton.outlined(
+                  color: verylightgrey,
+                  onPressed: () {},
+                  icon: Icon(Icons.share, color: darkGrey),
+                ),
+                title: Text(
+                  "Share",
+                  style: TextStyle(fontSize: 16, color: black),
+                ),
+                trailing: Icon(Icons.arrow_forward_ios_outlined,
+                    color: darkGrey, size: 18),
+              ),
+              ListTile(
+                leading: IconButton.outlined(
+                  color: verylightgrey,
+                  onPressed: () {},
+                  icon: Icon(Icons.info, color: darkGrey),
+                ),
+                title: Text(
+                  "About us",
+                  style: TextStyle(fontSize: 16, color: black),
+                ),
+                trailing: Icon(Icons.arrow_forward_ios_outlined,
+                    color: darkGrey, size: 18),
+              ),
+              ListTile(
+                leading: IconButton.outlined(
+                  color: verylightgrey,
+                  onPressed: () {},
+                  icon: Icon(Icons.star_border, color: darkGrey),
+                ),
+                title: Text(
+                  "Rate us",
+                  style: TextStyle(fontSize: 16, color: black),
+                ),
+                trailing: Icon(Icons.arrow_forward_ios_outlined,
+                    color: darkGrey, size: 18),
+              ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }
