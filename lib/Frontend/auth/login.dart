@@ -4,8 +4,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:foodapp/Frontend/home.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import '../constant/color.dart';
 import '../constant/images.dart';
+import '../state/generalState.dart';
 import 'signup.dart';
 
 final List<String> countryCodeList = ["+91", "+89", "+03", "+09"];
@@ -25,127 +27,129 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 50,
-                ),
-                const Text(
-                  "Sign-In",
-                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 50),
-                ),
-                const Image(
-                  height: 300,
-                  width: 300,
-                  image: AssetImage(signupImage),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(10.0),
+      body: Consumer<generalStateProvider>(
+        builder: (context, value, child) => SafeArea(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 50,
                   ),
-                  child: Row(
+                  const Text(
+                    "Sign-In",
+                    style: TextStyle(fontWeight: FontWeight.w900, fontSize: 50),
+                  ),
+                  const Image(
+                    height: 300,
+                    width: 300,
+                    image: AssetImage(signupImage),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.blue),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Row(
+                      children: [
+                        const SizedBox(
+                          width: 20.0,
+                        ),
+                        DropdownButton<String>(
+                          value: selectedCode,
+                          onChanged: (value) {
+                            setState(() {
+                              value = selectedCode;
+                            });
+                          },
+                          items: countryCodeList.map((String item) {
+                            return DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(item),
+                            );
+                          }).toList(),
+                        ),
+                        Expanded(
+                          child: TextField(
+                            keyboardType: TextInputType.phone,
+                            controller: _mobileController,
+                            decoration: const InputDecoration(
+                              enabled: true,
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.white, width: 1.0),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10.0),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.white, width: 1.0),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10.0),
+                                ),
+                              ),
+                              hintText: "Enter your mobile number",
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: yellow),
+                      onPressed: () {
+                        loginUser(context: context, value: value);
+                      },
+                      child: Text(
+                        "Login",
+                        style: TextStyle(
+                            color: black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(
-                        width: 20.0,
+                      Text(
+                        "Don't have an account?",
+                        style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          color: darkGrey,
+                          fontSize: 16,
+                        ),
                       ),
-                      DropdownButton<String>(
-                        value: selectedCode,
-                        onChanged: (value) {
-                          setState(() {
-                            value = selectedCode;
-                          });
-                        },
-                        items: countryCodeList.map((String item) {
-                          return DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(item),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Signup(),
+                            ),
                           );
-                        }).toList(),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          keyboardType: TextInputType.phone,
-                          controller: _mobileController,
-                          decoration: const InputDecoration(
-                            enabled: true,
-                            enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.white, width: 1.0),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10.0),
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.white, width: 1.0),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10.0),
-                              ),
-                            ),
-                            hintText: "Enter your mobile number",
+                        },
+                        child: Text(
+                          "Signup",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: blue,
+                            fontSize: 16,
                           ),
                         ),
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: yellow),
-                    onPressed: () {
-                      loginUser(context: context);
-                    },
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                          color: black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Don't have an account?",
-                      style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        color: darkGrey,
-                        fontSize: 16,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Signup(),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        "Signup",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: blue,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -154,7 +158,7 @@ class _LoginState extends State<Login> {
   }
 }
 
-Future<void> loginUser({context}) async {
+Future<void> loginUser({context, value}) async {
   //*take it from textfield for logged in*
   final response = await http.post(
     Uri.parse("http://192.168.0.102:8000/login"),
@@ -171,8 +175,11 @@ Future<void> loginUser({context}) async {
     Fluttertoast.showToast(
       msg: "Successfully logged in✅",
     );
-    await _storage.write(
-        key: 'mobile', value: _mobileController.text.toString());
+    writeSecureData(_mobileController.text.toString());
+    await readSecureData().then((e) {
+      value.setNumber(e.toString());
+    });
+
     Future.delayed(const Duration(seconds: 1), () {
       const CircularProgressIndicator();
       Navigator.pushReplacement(
@@ -187,4 +194,13 @@ Future<void> loginUser({context}) async {
       msg: "Failed to login",
     );
   }
+}
+
+Future<void> writeSecureData(String newItem) async {
+  await _storage.write(key: 'mobile', value: newItem);
+}
+
+Future<String?> readSecureData() async {
+  var readData = await _storage.read(key: 'mobile');
+  return readData;
 }

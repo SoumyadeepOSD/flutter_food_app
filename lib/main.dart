@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:foodapp/Frontend/auth/signup.dart';
 import 'package:foodapp/Frontend/home.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:foodapp/Frontend/state/generalState.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,24 +40,31 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.amberAccent),
-        useMaterial3: true,
-      ),
-      home: FutureBuilder<bool>(
-        future: checkSignUpStatus(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            bool hasSignedUp = snapshot.hasData;
-            print(authToken);
-            return authToken == 'null' ? const Signup() : const HomePage();
-          } else {
-            return const CircularProgressIndicator();
-          }
-        },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => generalStateProvider(),
+        )
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.amberAccent),
+          useMaterial3: true,
+        ),
+        home: FutureBuilder<bool>(
+          future: checkSignUpStatus(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              bool hasSignedUp = snapshot.hasData;
+              print(authToken);
+              return authToken == 'null' ? const Signup() : const HomePage();
+            } else {
+              return const CircularProgressIndicator();
+            }
+          },
+        ),
       ),
     );
   }

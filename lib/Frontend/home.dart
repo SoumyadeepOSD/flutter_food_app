@@ -2,10 +2,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:foodapp/Frontend/auth/login.dart';
+import 'package:foodapp/Frontend/pages/profile.dart';
 import 'package:http/http.dart' as http;
 import 'constant/color.dart';
 
 final _storage = const FlutterSecureStorage();
+
+final horizontalLine = Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+  child: Divider(color: verylightgrey, thickness: 1),
+);
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -56,14 +62,58 @@ class _HomePageState extends State<HomePage> {
       drawer: Drawer(
         child: ListView(
           children: [
-            ListTile(title: const Text("Profile"), onTap: () {}),
-            ListTile(title: const Text("Favorites"), onTap: () {}),
-            ListTile(title: const Text("Cart"), onTap: () {}),
-            ListTile(title: const Text("Notifications"), onTap: () {}),
-            ListTile(title: const Text("Settings"), onTap: () {}),
-            ListTile(title: const Text("Share"), onTap: () {}),
+            const SizedBox(height: 30.0),
             ListTile(
-                title: const Text("Log Out"),
+                title: const Text("Profile",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Profile(),
+                    ),
+                  );
+                }),
+            horizontalLine,
+            ListTile(
+                title: const Text("Favorites",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Profile(),
+                    ),
+                  );
+                }),
+            horizontalLine,
+            ListTile(
+                title: const Text("Cart",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                onTap: () {}),
+            horizontalLine,
+            ListTile(
+                title: const Text("Notifications",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                onTap: () {}),
+            horizontalLine,
+            ListTile(
+                title: const Text("Settings",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                onTap: () {}),
+            horizontalLine,
+            ListTile(
+                title: const Text("Share",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                onTap: () {}),
+            horizontalLine,
+            ListTile(
+                title: const Text("Log Out",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                trailing: Icon(
+                  Icons.exit_to_app_outlined,
+                  color: lightGrey,
+                ),
                 onTap: () {
                   print("Hello");
                   showDialog(
@@ -82,9 +132,7 @@ class _HomePageState extends State<HomePage> {
                                 style: TextStyle(
                                     color: black, fontWeight: FontWeight.w900),
                               ),
-                              const SizedBox(
-                                height: 20.0,
-                              ),
+                              const SizedBox(height: 20.0),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -128,9 +176,7 @@ class _HomePageState extends State<HomePage> {
                     },
                   );
                 }),
-            const SizedBox(
-              height: 300.0,
-            ),
+            const SizedBox(height: 200.0),
             Center(
               child: Text(
                 "v1.0.0",
