@@ -44,7 +44,8 @@ class Profile extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
                 decoration: BoxDecoration(
                     color: lightBlue,
-                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    borderRadius:
+                        const BorderRadius.all(Radius.circular(10.0))),
                 height: 100,
                 width: double.infinity,
                 child: Row(

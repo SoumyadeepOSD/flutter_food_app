@@ -175,8 +175,8 @@ Future<void> loginUser({context, value}) async {
     Fluttertoast.showToast(
       msg: "Successfully logged in✅",
     );
-    writeSecureData(_mobileController.text.toString());
-    await readSecureData().then((e) {
+    writeSecureData('mobile', _mobileController.text.toString());
+    await readSecureData('mobile').then((e) {
       value.setNumber(e.toString());
     });
     Future.delayed(const Duration(seconds: 1), () {
@@ -195,11 +195,11 @@ Future<void> loginUser({context, value}) async {
   }
 }
 
-Future<void> writeSecureData(String newItem) async {
-  await _storage.write(key: 'mobile', value: newItem);
+Future<void> writeSecureData(String key, String newItem) async {
+  await _storage.write(key: key, value: newItem);
 }
 
-Future<String?> readSecureData() async {
-  var readData = await _storage.read(key: 'mobile');
+Future<String?> readSecureData(String key) async {
+  var readData = await _storage.read(key: key);
   return readData;
 }

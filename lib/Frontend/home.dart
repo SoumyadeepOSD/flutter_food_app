@@ -1,13 +1,19 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
+import 'package:foodapp/Frontend/state/generalState.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:foodapp/Frontend/auth/login.dart';
 import 'package:foodapp/Frontend/pages/profile.dart';
-import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+
 import 'constant/color.dart';
+import 'utils/user_simple_preferences.dart';
 
 final _storage = const FlutterSecureStorage();
-
+String location = '';
 final horizontalLine = Padding(
   padding: const EdgeInsets.symmetric(horizontal: 15.0),
   child: Divider(color: verylightgrey, thickness: 1),
@@ -21,6 +27,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      location = UserSimplePreferences.getLocation() ?? '';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -186,15 +200,64 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: double.infinity,
-        margin: const EdgeInsets.symmetric(horizontal: 10.0),
-        color: lightGrey,
-        child: const Column(
-          children: [],
-        ),
+      body: Consumer<generalStateProvider>(
+        builder: (context, value, child) {
+          return Container(
+            height: MediaQuery.of(context).size.height,
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 10.0),
+            color: lightGrey,
+            child: Column(
+              children: [
+                InkWell(
+                  onTap: () async {
+                    _getPosition().then((v) {
+                      UserSimplePreferences.setLocation(v.toString());
+                      value.setLocation(location);
+                    });
+                  },
+                  child: Chip(
+                    label: Text(location),
+                    avatar: const Icon(
+                      Icons.location_on,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
+}
+
+Future<String?> _getPosition() async {
+  String? address;
+  LocationPermission permission = await Geolocator.checkPermission();
+  try {
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      print("No permission is given");
+      await Geolocator.requestPermission();
+    } else {
+      Position currentPosition = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.best);
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        double.parse(currentPosition.latitude.toString()),
+        double.parse(currentPosition.longitude.toString()),
+      );
+      if (placemarks.isNotEmpty) {
+        Placemark placemark = placemarks[0];
+        address =
+            "${placemark.name}, ${placemark.locality}, ${placemark.administrativeArea}, ${placemark.country}";
+      } else {
+        print("No location information found");
+      }
+    }
+  } catch (e) {
+    print("Error $e");
+  }
+  return address;
 }
