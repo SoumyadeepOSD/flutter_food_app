@@ -1,16 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
-import 'package:flutter/material.dart';
-import 'package:foodapp/Frontend/constant/images.dart';
-import 'package:foodapp/Frontend/state/generalState.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:foodapp/Frontend/auth/login.dart';
+import 'package:foodapp/Frontend/state/generalState.dart';
 import 'package:foodapp/Frontend/pages/profile.dart';
-import 'package:provider/provider.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'constant/color.dart';
+import 'package:foodapp/Frontend/auth/login.dart';
 import 'utils/user_simple_preferences.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
+import 'widgets/home_widgets.dart';
+import 'constant/color.dart';
 
 const _storage = FlutterSecureStorage();
 String location = '';
@@ -202,32 +201,38 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Consumer<generalStateProvider>(
         builder: (context, value, child) {
-          return Container(
-            height: MediaQuery.of(context).size.height,
-            width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 10.0),
-            color: lightGrey,
-            child: Column(
-              children: [
-                const SizedBox(height: 20.0),
-                InkWell(
-                  onTap: () async {
-                    _getPosition().then((v) {
-                      UserSimplePreferences.setLocation(v.toString());
-                      value.setLocation(v.toString());
-                    });
-                  },
-                  child: Chip(
-                    label: Text(location),
-                    avatar: const Icon(
-                      Icons.location_on,
-                      color: Colors.red,
+          return SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              width: double.infinity,
+              margin: const EdgeInsets.symmetric(horizontal: 10.0),
+              color: white,
+              child: Column(
+                children: [
+                  const SizedBox(height: 20.0),
+                  InkWell(
+                    onTap: () async {
+                      _getPosition().then((v) {
+                        UserSimplePreferences.setLocation(v.toString());
+                        value.setLocation(v.toString());
+                      });
+                    },
+                    child: Chip(
+                      label: Text(location),
+                      avatar: const Icon(
+                        Icons.location_on,
+                        color: Colors.red,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20.0),
-                automaticSlider(),
-              ],
+                  const SizedBox(height: 20.0),
+                  automaticSlider(),
+                  const SizedBox(height: 20.0),
+                  searchBar(),
+                  const SizedBox(height: 20.0),
+                ],
+              ),
             ),
           );
         },
@@ -264,30 +269,4 @@ Future<String?> _getPosition() async {
     print("Error $e");
   }
   return address;
-}
-
-Widget automaticSlider() {
-  return CarouselSlider(
-    options: CarouselOptions(
-        height: 150.0, autoPlay: true, clipBehavior: Clip.antiAlias),
-    items: carouseImagelList.map((i) {
-      return Builder(
-        builder: (BuildContext context) {
-          return Container(
-            width: MediaQuery.of(context).size.width,
-            margin: const EdgeInsets.symmetric(horizontal: 5.0),
-            decoration: BoxDecoration(
-                color: lightBlue, borderRadius: BorderRadius.circular(20.0)),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image(
-                image: AssetImage(i),
-                fit: BoxFit.cover,
-              ),
-            ),
-          );
-        },
-      );
-    }).toList(),
-  );
 }

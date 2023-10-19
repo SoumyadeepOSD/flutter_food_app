@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:foodapp/Frontend/auth/signup.dart';
-import 'package:foodapp/Frontend/home.dart';
+import 'package:foodapp/Frontend/utils/user_simple_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:foodapp/Frontend/state/generalState.dart';
-import 'package:foodapp/Frontend/utils/user_simple_preferences.dart';
+import 'package:foodapp/Frontend/auth/signup.dart';
+import 'package:foodapp/Frontend/home.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
