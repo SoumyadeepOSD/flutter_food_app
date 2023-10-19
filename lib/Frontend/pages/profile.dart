@@ -5,9 +5,25 @@ import 'package:provider/provider.dart';
 import '../state/generalState.dart';
 
 final _storage = const FlutterSecureStorage();
+String mobile = '';
 
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
   const Profile({super.key});
+
+  @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
+  @override
+  void initState() {
+    super.initState();
+    _storage.read(key: 'mobile').then((value) {
+      setState(() {
+        mobile = value.toString();
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +52,7 @@ class Profile extends StatelessWidget {
               ),
               const SizedBox(height: 20.0),
               Text(
-                value.thisnumber.toString(),
+                mobile,
                 style: TextStyle(fontSize: 18, color: black),
               ),
               const SizedBox(height: 20.0),

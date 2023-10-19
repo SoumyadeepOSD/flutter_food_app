@@ -1,18 +1,18 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
+import 'package:foodapp/Frontend/constant/images.dart';
 import 'package:foodapp/Frontend/state/generalState.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:foodapp/Frontend/auth/login.dart';
 import 'package:foodapp/Frontend/pages/profile.dart';
 import 'package:provider/provider.dart';
-
+import 'package:carousel_slider/carousel_slider.dart';
 import 'constant/color.dart';
 import 'utils/user_simple_preferences.dart';
 
-final _storage = const FlutterSecureStorage();
+const _storage = FlutterSecureStorage();
 String location = '';
 final horizontalLine = Padding(
   padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -209,11 +209,12 @@ class _HomePageState extends State<HomePage> {
             color: lightGrey,
             child: Column(
               children: [
+                const SizedBox(height: 20.0),
                 InkWell(
                   onTap: () async {
                     _getPosition().then((v) {
                       UserSimplePreferences.setLocation(v.toString());
-                      value.setLocation(location);
+                      value.setLocation(v.toString());
                     });
                   },
                   child: Chip(
@@ -224,6 +225,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 20.0),
+                automaticSlider(),
               ],
             ),
           );
@@ -233,6 +236,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+// *Get position from GPS of mobile*
 Future<String?> _getPosition() async {
   String? address;
   LocationPermission permission = await Geolocator.checkPermission();
@@ -260,4 +264,30 @@ Future<String?> _getPosition() async {
     print("Error $e");
   }
   return address;
+}
+
+Widget automaticSlider() {
+  return CarouselSlider(
+    options: CarouselOptions(
+        height: 150.0, autoPlay: true, clipBehavior: Clip.antiAlias),
+    items: carouseImagelList.map((i) {
+      return Builder(
+        builder: (BuildContext context) {
+          return Container(
+            width: MediaQuery.of(context).size.width,
+            margin: const EdgeInsets.symmetric(horizontal: 5.0),
+            decoration: BoxDecoration(
+                color: lightBlue, borderRadius: BorderRadius.circular(20.0)),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image(
+                image: AssetImage(i),
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        },
+      );
+    }).toList(),
+  );
 }

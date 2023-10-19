@@ -44,6 +44,7 @@ dependencies:
   geolocation_flutter: ^0.0.6
   geocoding: ^2.1.1
   shared_preferences: ^2.2.2
+  carousel_slider: ^4.2.1
 
 dev_dependencies:
   flutter_test:
