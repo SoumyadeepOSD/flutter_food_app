@@ -8,3 +8,5 @@ Color black = const Color(0xFF000000);
 Color blue = const Color(0xFF3B00A9);
 Color yellow = const Color(0xFFFFEB3B);
 Color lightBlue = const Color(0xBAEDF7F8);
+Color green = const Color(0xFF4CAF50);
+Color lightGreen = const Color(0xFFD4F4D5);

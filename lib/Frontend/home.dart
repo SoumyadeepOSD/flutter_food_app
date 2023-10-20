@@ -1,8 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:foodapp/Frontend/constant/images.dart';
 import 'package:foodapp/Frontend/state/generalState.dart';
 import 'package:foodapp/Frontend/pages/profile.dart';
 import 'package:foodapp/Frontend/auth/login.dart';
+import 'package:foodapp/Frontend/utils/productmodel.dart';
 import 'utils/user_simple_preferences.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
@@ -13,6 +15,8 @@ import 'constant/color.dart';
 
 const _storage = FlutterSecureStorage();
 String location = '';
+List<dynamic> items = [];
+
 final horizontalLine = Padding(
   padding: const EdgeInsets.symmetric(horizontal: 15.0),
   child: Divider(color: verylightgrey, thickness: 1),
@@ -31,6 +35,13 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     setState(() {
       location = UserSimplePreferences.getLocation() ?? '';
+    });
+  }
+
+  void setLabel({flag}) {
+    setState(() {
+      items =
+          products.where((element) => element.type.toString() == flag).toList();
     });
   }
 
@@ -204,11 +215,12 @@ class _HomePageState extends State<HomePage> {
           return SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Container(
-              height: MediaQuery.of(context).size.height,
+              height: 2000,
               width: double.infinity,
               margin: const EdgeInsets.symmetric(horizontal: 10.0),
               color: white,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 20.0),
                   InkWell(
@@ -218,11 +230,13 @@ class _HomePageState extends State<HomePage> {
                         value.setLocation(v.toString());
                       });
                     },
-                    child: Chip(
-                      label: Text(location),
-                      avatar: const Icon(
-                        Icons.location_on,
-                        color: Colors.red,
+                    child: Center(
+                      child: Chip(
+                        label: Text(location),
+                        avatar: const Icon(
+                          Icons.location_on,
+                          color: Colors.red,
+                        ),
                       ),
                     ),
                   ),
@@ -231,6 +245,246 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 20.0),
                   searchBar(),
                   const SizedBox(height: 20.0),
+                  const Text(
+                    'Categories',
+                    style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20),
+                  ),
+                  const SizedBox(height: 10.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      imagesWithText(
+                          image: burger, text: "Burger", onTap: () {}),
+                      imagesWithText(image: pizza, text: "Pizza", onTap: () {}),
+                      imagesWithText(
+                          image: noodles, text: "Noodles", onTap: () {}),
+                      imagesWithText(image: meat, text: "Meat", onTap: () {}),
+                    ],
+                  ),
+                  const SizedBox(height: 10.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      imagesWithText(
+                          image: veggies, text: "Vegan", onTap: () {}),
+                      imagesWithText(
+                          image: desserts, text: "Dessert", onTap: () {}),
+                      imagesWithText(image: drink, text: "Drink", onTap: () {}),
+                      imagesWithText(image: more, text: "More", onTap: () {}),
+                    ],
+                  ),
+                  const SizedBox(height: 20.0),
+                  const Text(
+                    'Recommended For You 😍',
+                    style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ListView(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            value.setAll();
+                            setLabel(flag: value.flag);
+                          },
+                          child: Chip(
+                            backgroundColor:
+                                value.flag == 'all' ? lightGreen : white,
+                            side: BorderSide(width: 1.0, color: blue),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50)),
+                            label: const Text(
+                              "All",
+                            ),
+                            avatar: CircleAvatar(
+                              backgroundColor: green,
+                              radius: 50,
+                              child: Icon(
+                                Icons.done,
+                                color: white,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10.0),
+                        InkWell(
+                          onTap: () {
+                            value.setBurger();
+                            setLabel(flag: value.flag);
+                          },
+                          child: Chip(
+                            backgroundColor:
+                                value.flag == 'burger' ? lightGreen : white,
+                            side: BorderSide(width: 1.0, color: blue),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50)),
+                            label: const Text(
+                              "Burger",
+                            ),
+                            avatar: const Image(
+                              height: 30,
+                              width: 30,
+                              image: AssetImage(burger),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10.0),
+                        InkWell(
+                          onTap: () {
+                            value.setPizza();
+                            setLabel(flag: value.flag);
+                          },
+                          child: Chip(
+                            backgroundColor:
+                                value.flag == 'pizza' ? lightGreen : white,
+                            side: BorderSide(width: 1.0, color: blue),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50)),
+                            label: const Text(
+                              "Pizza",
+                            ),
+                            avatar: const Image(
+                              height: 30,
+                              width: 30,
+                              image: AssetImage(pizza),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10.0),
+                        InkWell(
+                          onTap: () {
+                            value.setNoodles();
+                            setLabel(flag: value.flag);
+                          },
+                          child: Chip(
+                            backgroundColor:
+                                value.flag == 'noodles' ? lightGreen : white,
+                            side: BorderSide(width: 1.0, color: blue),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50)),
+                            label: const Text(
+                              "Noodles",
+                            ),
+                            avatar: const Image(
+                              height: 30,
+                              width: 30,
+                              image: AssetImage(noodles),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10.0),
+                        InkWell(
+                          onTap: () {
+                            value.setMeat();
+                            setLabel(flag: value.flag);
+                          },
+                          child: Chip(
+                            backgroundColor:
+                                value.flag == 'meat' ? lightGreen : white,
+                            side: BorderSide(width: 1.0, color: blue),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50)),
+                            label: const Text(
+                              "Meat",
+                            ),
+                            avatar: const Image(
+                              height: 30,
+                              width: 30,
+                              image: AssetImage(meat),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10.0),
+                        InkWell(
+                          onTap: () {
+                            value.setVeggie();
+                            setLabel(flag: value.flag);
+                          },
+                          child: Chip(
+                            backgroundColor:
+                                value.flag == 'veggie' ? lightGreen : white,
+                            side: BorderSide(width: 1.0, color: blue),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50)),
+                            label: const Text(
+                              "Vegan",
+                            ),
+                            avatar: const Image(
+                              height: 30,
+                              width: 30,
+                              image: AssetImage(veggies),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10.0),
+                        InkWell(
+                          onTap: () {
+                            value.setDesserts();
+                            setLabel(flag: value.flag);
+                          },
+                          child: Chip(
+                            backgroundColor:
+                                value.flag == 'desserts' ? lightGreen : white,
+                            side: BorderSide(width: 1.0, color: blue),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50)),
+                            label: const Text(
+                              "Dessert",
+                            ),
+                            avatar: const Image(
+                              height: 30,
+                              width: 30,
+                              image: AssetImage(desserts),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10.0),
+                        InkWell(
+                          onTap: () {
+                            value.setDrink();
+                            setLabel(flag: value.flag);
+                          },
+                          child: Chip(
+                            backgroundColor:
+                                value.flag == 'drink' ? lightGreen : white,
+                            side: BorderSide(width: 1.0, color: blue),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50)),
+                            label: const Text(
+                              "Drink",
+                            ),
+                            avatar: const Image(
+                              height: 30,
+                              width: 30,
+                              image: AssetImage(drink),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // *Ending of Filter Chips*
+                  const SizedBox(height: 20.0),
+
+                  Container(
+                    height: 700,
+                    color: green,
+                    width: double.infinity,
+                    child: ListView.builder(
+                      shrinkWrap: false,
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        print(items[index].name.toString());
+                        return ListTile(
+                          title: Text(items[index].name.toString()),
+                        );
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),

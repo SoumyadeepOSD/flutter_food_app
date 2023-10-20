@@ -71,3 +71,31 @@ Widget automaticSlider() {
     }).toList(),
   );
 }
+
+// *Images with Text*
+Widget imagesWithText({image, text, onTap}) {
+  return InkWell(
+    onTap: () => onTap,
+    child: Container(
+      padding: const EdgeInsets.all(10.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        color: lightBlue,
+      ),
+      child: Column(
+        children: [
+          Image(
+            height: 50,
+            width: 50,
+            image: AssetImage(image),
+          ),
+          Text(
+            text,
+            style: TextStyle(
+                color: black, fontSize: 14, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    ),
+  );
+}
