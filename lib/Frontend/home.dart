@@ -40,8 +40,13 @@ class _HomePageState extends State<HomePage> {
 
   void setLabel({flag}) {
     setState(() {
-      items =
-          products.where((element) => element.type.toString() == flag).toList();
+      if (flag == 'all') {
+        items = products;
+      } else {
+        items = products
+            .where((element) => element.type.toString() == flag)
+            .toList();
+      }
     });
   }
 
@@ -470,17 +475,88 @@ class _HomePageState extends State<HomePage> {
                   // *Ending of Filter Chips*
                   const SizedBox(height: 20.0),
 
-                  Container(
-                    height: 700,
-                    color: green,
+                  SizedBox(
+                    height: items.length * 130,
                     width: double.infinity,
                     child: ListView.builder(
-                      shrinkWrap: false,
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
                       itemCount: items.length,
                       itemBuilder: (context, index) {
                         print(items[index].name.toString());
-                        return ListTile(
-                          title: Text(items[index].name.toString()),
+                        return Container(
+                          decoration: BoxDecoration(
+                              color: verylightgrey,
+                              borderRadius: BorderRadius.circular(10.0)),
+                          padding: const EdgeInsets.symmetric(vertical: 5.0),
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 5.0,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 5.0, horizontal: 5.0),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    border:
+                                        Border.all(color: black, width: 1.0)),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Image(
+                                    height: 100,
+                                    width: 120,
+                                    fit: BoxFit.fill,
+                                    image: AssetImage(
+                                      items[index].image,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 20.0),
+                              SizedBox(
+                                width: 200,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      items[index].name.toString(),
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 20),
+                                    ),
+                                    const SizedBox(height: 10.0),
+                                    Row(
+                                      children: [
+                                        Text(
+                                            '${items[index].distance.toString()}m\t\t|\t\t'),
+                                        const Icon(Icons.star,
+                                            color: Colors.amber),
+                                        const SizedBox(width: 5.0),
+                                        Text(items[index].ratings.toString()),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 10.0),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                            '₹ ${items[index].price.toString()}'),
+                                        const Icon(Icons.favorite_border,
+                                            color: Colors.red),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
                         );
                       },
                     ),
