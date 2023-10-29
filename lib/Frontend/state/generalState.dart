@@ -45,12 +45,12 @@ class generalStateProvider extends ChangeNotifier {
   }
 
   void setVeggie() {
-    if (flag != 'veggie') flag = 'veggie';
+    if (flag != 'veggies') flag = 'veggies';
     notifyListeners();
   }
 
   void setDesserts() {
-    if (flag != 'desserts') flag = 'desserts';
+    if (flag != 'dessert') flag = 'dessert';
     notifyListeners();
   }
 

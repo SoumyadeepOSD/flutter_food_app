@@ -1,21 +1,24 @@
 // ignore_for_file: use_build_context_synchronously
+import 'dart:math';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:foodapp/Frontend/constant/images.dart';
 import 'package:foodapp/Frontend/state/generalState.dart';
+import 'package:foodapp/Frontend/constant/images.dart';
 import 'package:foodapp/Frontend/pages/profile.dart';
 import 'package:foodapp/Frontend/auth/login.dart';
-import 'package:foodapp/Frontend/utils/productmodel.dart';
 import 'utils/user_simple_preferences.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'widgets/home_widgets.dart';
 import 'constant/color.dart';
+import 'dart:convert';
 
 const _storage = FlutterSecureStorage();
 String location = '';
-List<dynamic> items = [];
+List products = [];
+List filterProducts = [];
 
 final horizontalLine = Padding(
   padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -33,21 +36,39 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    fetchData();
     setState(() {
       location = UserSimplePreferences.getLocation() ?? '';
     });
   }
 
+  // *Set lables based on filter*
   void setLabel({flag}) {
     setState(() {
       if (flag == 'all') {
-        items = products;
+        filterProducts = products;
       } else {
-        items = products
+        filterProducts = products
             .where((element) => element.type.toString() == flag)
             .toList();
       }
     });
+  }
+
+  // *Fetch Products from backend*
+  Future<void> fetchData() async {
+    final response =
+        await http.get(Uri.parse('http://192.168.0.102:8000/products'));
+
+    if (response.statusCode == 200) {
+      // Successful response
+      final data = response.body;
+      products = json.decode(data);
+      // print(products[0]['type']);
+    } else {
+      // Handle the error
+      print('Failed to fetch data. Status code: ${response.statusCode}');
+    }
   }
 
   @override
@@ -476,17 +497,17 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 20.0),
 
                   SizedBox(
-                    height: items.length * 130,
+                    height: filterProducts.length * 130,
                     width: double.infinity,
                     child: ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      itemCount: items.length,
+                      itemCount: filterProducts.length,
                       itemBuilder: (context, index) {
-                        print(items[index].name.toString());
+                        print(filterProducts[index]['price'].toString());
                         return Container(
                           decoration: BoxDecoration(
-                              color: verylightgrey,
+                              color: extremelightgrey,
                               borderRadius: BorderRadius.circular(10.0)),
                           padding: const EdgeInsets.symmetric(vertical: 5.0),
                           margin: const EdgeInsets.symmetric(
@@ -511,7 +532,7 @@ class _HomePageState extends State<HomePage> {
                                     width: 120,
                                     fit: BoxFit.fill,
                                     image: AssetImage(
-                                      items[index].image,
+                                      filterProducts[index]['image'].toString(),
                                     ),
                                   ),
                                 ),
@@ -525,7 +546,7 @@ class _HomePageState extends State<HomePage> {
                                     Text(
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
-                                      items[index].name.toString(),
+                                      filterProducts[index]['name'].toString(),
                                       style: const TextStyle(
                                           fontWeight: FontWeight.w900,
                                           fontSize: 20),
@@ -534,11 +555,12 @@ class _HomePageState extends State<HomePage> {
                                     Row(
                                       children: [
                                         Text(
-                                            '${items[index].distance.toString()}m\t\t|\t\t'),
+                                            '${filterProducts[index].distance.toString()}m\t\t|\t\t'),
                                         const Icon(Icons.star,
                                             color: Colors.amber),
                                         const SizedBox(width: 5.0),
-                                        Text(items[index].ratings.toString()),
+                                        Text(filterProducts[index]['ratings']
+                                            .toString()),
                                       ],
                                     ),
                                     const SizedBox(height: 10.0),
@@ -547,7 +569,7 @@ class _HomePageState extends State<HomePage> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                            '₹ ${items[index].price.toString()}'),
+                                            '₹ ${filterProducts[index].price.toString()}'),
                                         const Icon(Icons.favorite_border,
                                             color: Colors.red),
                                       ],
