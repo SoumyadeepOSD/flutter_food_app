@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
-import 'dart:math';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:foodapp/Frontend/pages/cart.dart';
+import 'package:foodapp/Frontend/pages/product_details.dart';
 import 'package:foodapp/Frontend/state/generalState.dart';
 import 'package:foodapp/Frontend/constant/images.dart';
 import 'package:foodapp/Frontend/pages/profile.dart';
@@ -17,8 +18,8 @@ import 'dart:convert';
 
 const _storage = FlutterSecureStorage();
 String location = '';
-List products = [];
-List filterProducts = [];
+List<dynamic> products = [];
+List<dynamic> filterProducts = [];
 
 final horizontalLine = Padding(
   padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -49,7 +50,7 @@ class _HomePageState extends State<HomePage> {
         filterProducts = products;
       } else {
         filterProducts = products
-            .where((element) => element.type.toString() == flag)
+            .where((element) => element['type'].toString() == flag)
             .toList();
       }
     });
@@ -64,7 +65,7 @@ class _HomePageState extends State<HomePage> {
       // Successful response
       final data = response.body;
       products = json.decode(data);
-      // print(products[0]['type']);
+      print(products[0]);
     } else {
       // Handle the error
       print('Failed to fetch data. Status code: ${response.statusCode}');
@@ -140,7 +141,14 @@ class _HomePageState extends State<HomePage> {
             ListTile(
                 title: const Text("Cart",
                     style: TextStyle(fontWeight: FontWeight.bold)),
-                onTap: () {}),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Cart(),
+                    ),
+                  );
+                }),
             horizontalLine,
             ListTile(
                 title: const Text("Notifications",
@@ -432,7 +440,7 @@ class _HomePageState extends State<HomePage> {
                           },
                           child: Chip(
                             backgroundColor:
-                                value.flag == 'veggie' ? lightGreen : white,
+                                value.flag == 'veggies' ? lightGreen : white,
                             side: BorderSide(width: 1.0, color: blue),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50)),
@@ -454,7 +462,7 @@ class _HomePageState extends State<HomePage> {
                           },
                           child: Chip(
                             backgroundColor:
-                                value.flag == 'desserts' ? lightGreen : white,
+                                value.flag == 'dessert' ? lightGreen : white,
                             side: BorderSide(width: 1.0, color: blue),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50)),
@@ -505,79 +513,106 @@ class _HomePageState extends State<HomePage> {
                       itemCount: filterProducts.length,
                       itemBuilder: (context, index) {
                         print(filterProducts[index]['price'].toString());
-                        return Container(
-                          decoration: BoxDecoration(
-                              color: extremelightgrey,
-                              borderRadius: BorderRadius.circular(10.0)),
-                          padding: const EdgeInsets.symmetric(vertical: 5.0),
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 5.0,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 5.0),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 5.0, horizontal: 5.0),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    border:
-                                        Border.all(color: black, width: 1.0)),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image(
-                                    height: 100,
-                                    width: 120,
-                                    fit: BoxFit.fill,
-                                    image: AssetImage(
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductDetails(
+                                  name:
+                                      filterProducts[index]['name'].toString(),
+                                  price: filterProducts[index]['price'],
+                                  image:
                                       filterProducts[index]['image'].toString(),
+                                  type:
+                                      filterProducts[index]['type'].toString(),
+                                  distance: filterProducts[index]['distance'],
+                                  ratings: filterProducts[index]['ratings'],
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: extremelightgrey,
+                                borderRadius: BorderRadius.circular(10.0)),
+                            padding: const EdgeInsets.symmetric(vertical: 5.0),
+                            margin: const EdgeInsets.symmetric(
+                              vertical: 5.0,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 5.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 5.0),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      border:
+                                          Border.all(color: black, width: 1.0)),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Image(
+                                      height: 100,
+                                      width: 120,
+                                      fit: BoxFit.fill,
+                                      image: NetworkImage(
+                                        filterProducts[index]['image']
+                                            .toString(),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 20.0),
-                              SizedBox(
-                                width: 200,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                      filterProducts[index]['name'].toString(),
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 20),
-                                    ),
-                                    const SizedBox(height: 10.0),
-                                    Row(
-                                      children: [
-                                        Text(
-                                            '${filterProducts[index].distance.toString()}m\t\t|\t\t'),
-                                        const Icon(Icons.star,
-                                            color: Colors.amber),
-                                        const SizedBox(width: 5.0),
-                                        Text(filterProducts[index]['ratings']
-                                            .toString()),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10.0),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                            '₹ ${filterProducts[index].price.toString()}'),
-                                        const Icon(Icons.favorite_border,
-                                            color: Colors.red),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
+                                const SizedBox(width: 20.0),
+                                SizedBox(
+                                  width: 200,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        filterProducts[index]['name']
+                                            .toString(),
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 20),
+                                      ),
+                                      const SizedBox(height: 10.0),
+                                      Row(
+                                        children: [
+                                          Text(
+                                              '${filterProducts[index]['distance'].toString()}m\t\t|\t\t'),
+                                          const Icon(Icons.star,
+                                              color: Colors.amber),
+                                          const SizedBox(width: 5.0),
+                                          Text(filterProducts[index]['ratings']
+                                              .toString()),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10.0),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                              '₹ ${filterProducts[index]['price'].toString()}'),
+                                          IconButton(
+                                            onPressed: () {},
+                                            icon: const Icon(
+                                                Icons.favorite_border,
+                                                color: Colors.red),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         );
                       },

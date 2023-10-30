@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:foodapp/Frontend/home.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import '../constant/color.dart';
-import '../constant/images.dart';
+import 'package:flutter/material.dart';
 import '../state/generalState.dart';
+import '../constant/images.dart';
+import '../constant/color.dart';
+import 'dart:convert';
 import 'signup.dart';
 
 final List<String> countryCodeList = ["+91", "+89", "+03", "+09"];
