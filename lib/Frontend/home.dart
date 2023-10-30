@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:foodapp/Frontend/pages/cart.dart';
 import 'package:foodapp/Frontend/pages/product_details.dart';
 import 'package:foodapp/Frontend/state/generalState.dart';
@@ -20,6 +21,7 @@ const _storage = FlutterSecureStorage();
 String location = '';
 List<dynamic> products = [];
 List<dynamic> filterProducts = [];
+String _mobile = '';
 
 final horizontalLine = Padding(
   padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -36,11 +38,15 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
-    super.initState();
     fetchData();
-    setState(() {
-      location = UserSimplePreferences.getLocation() ?? '';
+    _storage.read(key: 'mobile').then((value) {
+      setState(() {
+        _mobile = value.toString();
+        location = UserSimplePreferences.getLocation() ?? '';
+      });
     });
+    fetchCartData(_mobile);
+    super.initState();
   }
 
   // *Set lables based on filter*
@@ -69,6 +75,34 @@ class _HomePageState extends State<HomePage> {
     } else {
       // Handle the error
       print('Failed to fetch data. Status code: ${response.statusCode}');
+    }
+  }
+
+  Future<void> fetchCartData(String mobileNumber) async {
+    const apiUrl = 'http://192.168.0.102:8000/cart';
+    final url = Uri.parse('$apiUrl?mobile=$mobileNumber');
+    try {
+      final response = await http.get(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      if (response.statusCode == 200) {
+        final cartData = jsonDecode(response.body);
+        setState(() {
+          cartDataList = cartData;
+        });
+        print(cartDataList);
+      } else {
+        Fluttertoast.showToast(
+          msg: "Failed to fetch data",
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: e.toString(),
+      );
     }
   }
 
