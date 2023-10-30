@@ -1,13 +1,8 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import '../constant/color.dart';
 import 'dart:convert';
-
-List<dynamic> cartDataList = [];
-final _storage = const FlutterSecureStorage();
-String _mobile = '';
 
 class Cart extends StatefulWidget {
   const Cart({super.key});
@@ -17,6 +12,10 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> {
+  final _storage = const FlutterSecureStorage();
+  String _mobile = '';
+  List<dynamic> cartDataList = [];
+
   @override
   void initState() {
     _storage.read(key: 'mobile').then((value) {
@@ -24,7 +23,6 @@ class _CartState extends State<Cart> {
         _mobile = value.toString();
       });
     });
-    fetchCartData(_mobile);
     super.initState();
   }
 
@@ -42,6 +40,37 @@ class _CartState extends State<Cart> {
       return cartData;
     } else {
       throw Exception("Failed to fetch data");
+    }
+  }
+
+  Future<void> incrementItemQuantity(int index) async {
+    setState(() {
+      cartDataList[index]['items']++;
+    });
+    updateCartOnBackend(index, cartDataList[index]['items']);
+  }
+
+  Future<void> decrementItemQuantity(int index) async {
+    setState(() {
+      cartDataList[index]['items']--;
+    });
+    updateCartOnBackend(index, cartDataList[index]['items']);
+  }
+
+  Future<void> updateCartOnBackend(int index, int quantity) async {
+    final apiUrl =
+        'http://192.168.0.102:8000/cart/${cartDataList[index]['_id']}'; // Assuming you have an ID for the cart item
+    final response = await http.put(
+      Uri.parse(apiUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({'items': quantity}),
+    );
+    if (response.statusCode == 200) {
+      print('Amount changed successfully');
+    } else {
+      print('Failed to update cart. Status code: ${response.statusCode}');
     }
   }
 
@@ -64,10 +93,13 @@ class _CartState extends State<Cart> {
         future: fetchCartData(_mobile),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
+            // Show loading indicator
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
+            // Handle error gracefully
             return Center(child: Text("Error: ${snapshot.error}"));
           } else {
+            // Data has been fetched, update the cartDataList
             cartDataList = snapshot.data!;
             return Container(
               margin: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -142,7 +174,9 @@ class _CartState extends State<Cart> {
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: green),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    incrementItemQuantity(index);
+                                  },
                                   child: Icon(
                                     Icons.add,
                                     color: black,
@@ -155,15 +189,19 @@ class _CartState extends State<Cart> {
                                       TextStyle(color: black, fontSize: 20.0),
                                 ),
                                 const SizedBox(width: 10.0),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: red),
-                                  onPressed: () {},
-                                  child: Icon(
-                                    Icons.remove,
-                                    color: black,
-                                  ),
-                                ),
+                                cartDataList[index]['items'] > 1
+                                    ? ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: red),
+                                        onPressed: () {
+                                          decrementItemQuantity(index);
+                                        },
+                                        child: Icon(
+                                          Icons.remove,
+                                          color: black,
+                                        ),
+                                      )
+                                    : const SizedBox(height: 0),
                               ],
                             )
                           ],

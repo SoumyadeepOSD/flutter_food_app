@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
         location = UserSimplePreferences.getLocation() ?? '';
       });
     });
-    fetchCartData(_mobile);
+
     super.initState();
   }
 
@@ -75,34 +75,6 @@ class _HomePageState extends State<HomePage> {
     } else {
       // Handle the error
       print('Failed to fetch data. Status code: ${response.statusCode}');
-    }
-  }
-
-  Future<void> fetchCartData(String mobileNumber) async {
-    const apiUrl = 'http://192.168.0.102:8000/cart';
-    final url = Uri.parse('$apiUrl?mobile=$mobileNumber');
-    try {
-      final response = await http.get(
-        url,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-      );
-      if (response.statusCode == 200) {
-        final cartData = jsonDecode(response.body);
-        setState(() {
-          cartDataList = cartData;
-        });
-        print(cartDataList);
-      } else {
-        Fluttertoast.showToast(
-          msg: "Failed to fetch data",
-        );
-      }
-    } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString(),
-      );
     }
   }
 
