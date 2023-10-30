@@ -74,6 +74,24 @@ class _CartState extends State<Cart> {
     }
   }
 
+  Future<void> deleteCartItem(int index) async {
+    final apiUrl =
+        'http://192.168.0.102:8000/cart/${cartDataList[index]['_id']}'; // Assuming you have an ID for the cart item
+    final response = await http.delete(
+      Uri.parse(apiUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        cartDataList.removeAt(index);
+      });
+    } else {
+      print('Failed to delete cart. Status code: ${response.statusCode}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -157,7 +175,12 @@ class _CartState extends State<Cart> {
                                       fontWeight: FontWeight.w900,
                                     ),
                                   ),
-                                  Icon(Icons.delete, color: red)
+                                  InkWell(
+                                    onTap: () {
+                                      deleteCartItem(index);
+                                    },
+                                    child: Icon(Icons.delete, color: red),
+                                  )
                                 ],
                               ),
                             ),
