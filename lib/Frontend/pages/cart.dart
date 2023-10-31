@@ -260,7 +260,7 @@ class _CartState extends State<Cart> {
                         backgroundColor: green,
                       ),
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => const Checkout(),

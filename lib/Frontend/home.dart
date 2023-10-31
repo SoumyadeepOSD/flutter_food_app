@@ -148,12 +148,15 @@ class _HomePageState extends State<HomePage> {
                 title: const Text("Cart",
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const Cart(),
-                    ),
-                  );
+                  Navigator.of(context).pushNamed('/cart').then((_) {
+                    _scaffoldKey.currentState!.openEndDrawer();
+                  });
+                  // Navigator.pushReplacement(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => const Cart(),
+                  //   ),
+                  // );
                 }),
             horizontalLine,
             ListTile(

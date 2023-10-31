@@ -324,8 +324,12 @@ class _PrefinalState extends State<Prefinal> {
                     ];
                     _flag = await createOrder(finalOrderdata);
                     _flag == true
-                        ? Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/last', ModalRoute.withName('/home'))
+                        ? Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const FinalPage(),
+                            ),
+                          )
                         : Fluttertoast.showToast(
                             msg: "Order did not place",
                           );

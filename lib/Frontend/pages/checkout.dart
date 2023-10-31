@@ -132,7 +132,7 @@ class _CheckoutState extends State<Checkout> {
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(backgroundColor: green),
               onPressed: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) => Prefinal(
