@@ -1,3 +1,4 @@
+import 'package:foodapp/Frontend/pages/finalPage.dart';
 import 'package:foodapp/Frontend/utils/user_simple_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:foodapp/Frontend/state/generalState.dart';
@@ -55,6 +56,22 @@ class _MyAppState extends State<MyApp> {
         ),
       ],
       child: MaterialApp(
+        // routes: {
+        //   '/signup': (context) => const Signup(),
+        //   '/home': (context) => const HomePage(),
+        //   '/last': (context) => const FinalPage()
+        // },
+        onGenerateRoute: (settings) {
+          switch (settings.name) {
+            case '/signup':
+              return MaterialPageRoute(builder: (context) => const Signup());
+            case '/home':
+              return MaterialPageRoute(builder: (context) => const HomePage());
+            case '/last':
+              return MaterialPageRoute(builder: (context) => const FinalPage());
+          }
+        },
+        initialRoute: '/home',
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
