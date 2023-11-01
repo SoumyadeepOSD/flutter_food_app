@@ -17,7 +17,7 @@ const veggies = "assets/images/veggies.jpg";
 const desserts = "assets/images/desserts.jpg";
 const drink = "assets/images/drinks.jpg";
 const more = "assets/images/morefood.jpg";
-
+const cartEmpty = "assets/images/cartempty.png";
 List<String> carouseImagelList = [
   sliderFirstImage,
   sliderSecondImage,

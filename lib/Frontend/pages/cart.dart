@@ -1,4 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:foodapp/Frontend/constant/images.dart';
 import 'package:foodapp/Frontend/pages/checkout.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ Future<List<dynamic>> fetchCartData(String mobileNumber) async {
   );
   if (response.statusCode == 200) {
     final cartData = jsonDecode(response.body);
+    print(cartData);
     return cartData;
   } else {
     throw Exception("Failed to fetch data");
@@ -121,6 +123,33 @@ class _CartState extends State<Cart> {
             } else if (snapshot.hasError) {
               // Handle error gracefully
               return Center(child: Text("Error: ${snapshot.error}"));
+            } else if (!snapshot.data!.isNotEmpty) {
+              return SizedBox(
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 200,
+                    ),
+                    const Image(
+                      image: AssetImage(cartEmpty),
+                      height: 200,
+                      width: 200,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Your cart is empty! Fill it up!",
+                      style: TextStyle(
+                          color: black,
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              );
             } else {
               // Data has been fetched, update the cartDataList
               cartDataList = snapshot.data!;

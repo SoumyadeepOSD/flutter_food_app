@@ -2,6 +2,8 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:foodapp/Frontend/pages/cart.dart';
+import 'package:foodapp/Frontend/pages/finalPage.dart';
+import 'package:foodapp/Frontend/pages/orders.dart';
 import 'package:foodapp/Frontend/pages/product_details.dart';
 import 'package:foodapp/Frontend/state/generalState.dart';
 import 'package:foodapp/Frontend/constant/images.dart';
@@ -160,9 +162,16 @@ class _HomePageState extends State<HomePage> {
                 }),
             horizontalLine,
             ListTile(
-                title: const Text("Notifications",
+                title: const Text("Orders",
                     style: TextStyle(fontWeight: FontWeight.bold)),
-                onTap: () {}),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Orders(),
+                    ),
+                  );
+                }),
             horizontalLine,
             ListTile(
                 title: const Text("Settings",
