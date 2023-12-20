@@ -37,7 +37,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   @override
-  @override
   void initState() {
     super.initState();
     storage.read(key: 'mobile').then((value) {
@@ -72,7 +71,7 @@ class _MyAppState extends State<MyApp> {
           future: checkSignUpStatus(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              bool hasSignedUp = snapshot.hasData;
+              // bool hasSignedUp = snapshot.hasData;
               print(authToken);
               return authToken == 'null' ? const Signup() : const HomePage();
             } else {
