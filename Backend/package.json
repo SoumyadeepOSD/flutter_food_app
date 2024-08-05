@@ -18,7 +18,7 @@
   "scripts": {
     "start":"node server.js",
     "dev": "nodemon server.js",
-    "build": "build --output public",
+    "build": "build --output-dir public",
     "vercel-build":"echo hello"
   },
   "name": "backend",
