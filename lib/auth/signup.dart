@@ -7,10 +7,12 @@ import 'package:foodapp/home.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import '../constant/images.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final List<String> countryCodeList = ["+91", "+89", "+03", "+09"];
 String selectedCode = "+91";
 bool isLoading = false;
+String token = "";
 
 TextEditingController _fullNameController = TextEditingController();
 TextEditingController _mobileNumberController = TextEditingController();
@@ -29,6 +31,62 @@ class _SignupState extends State<Signup> {
     setState(() {
       isLoading = loadingState;
     });
+  }
+
+  Future<bool> setToken(String tokenKey) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool result = await prefs.setString("token", tokenKey);
+    if (result) {
+      print("Token $tokenKey saved");
+      return true;
+    } else {
+      print("Failed to save token");
+      return false;
+    }
+  }
+
+  Future<void> registerUser({context, setLoading}) async {
+    try {
+      setLoading(true);
+      final response = await http.post(
+        Uri.parse("https://food-app-backend-jgni.onrender.com/api/user/signup"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          "fullName": _fullNameController.text.toString(),
+          "mobileNumber": _mobileNumberController.text.toString(),
+          "email": _emailController.text.toString(),
+          "password": _passwordController.text.toString()
+        }),
+      );
+
+      setLoading(false);
+
+      if (response.statusCode == 201) {
+        final dynamic data = jsonDecode(response.body);
+        Fluttertoast.showToast(msg: 'Successfully registered');
+        bool result = await setToken(data['token']);
+        if (result) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const HomePage(),
+            ),
+          );
+        } else {
+          Fluttertoast.showToast(msg: 'Failed to save token');
+        }
+      } else {
+        // Handle different status codes and show relevant message
+        Fluttertoast.showToast(msg: 'Failed to register. Please try again.');
+        print('Failed to register: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      setLoading(false);
+      Fluttertoast.showToast(msg: 'An error occurred: ${e.toString()}');
+      print('An error occurred: ${e.toString()}');
+    }
   }
 
   @override
@@ -183,39 +241,6 @@ class _SignupState extends State<Signup> {
         ),
       ),
     );
-  }
-}
-
-Future<void> registerUser({context, setLoading}) async {
-  try {
-    // setLoading(true);
-    final response = await http.post(
-      Uri.parse("http://192.168.0.100:8000/api/user/signup"),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        "fullName": _fullNameController.text.toString(),
-        "mobileNumber": _mobileNumberController.text.toString(),
-        "email": _emailController.text.toString(),
-        "password": _passwordController.text.toString()
-      }),
-    );
-    if (response.statusCode == 200) {
-      final dynamic data = jsonDecode(response.body);
-      print(data);
-      Fluttertoast.showToast(msg: 'Successfully registered $data');
-      // setLoading(false);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const HomePage(),
-        ),
-      );
-    }
-  } catch (e) {
-    print(e.toString());
-    Fluttertoast.showToast(msg: e.toString());
   }
 }
 
